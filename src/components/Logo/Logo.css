@@ -1,0 +1,9 @@
+.logo {
+  align-self: center;
+}
+
+.logo__image {
+  width: 137px;
+  object-fit: contain;
+  display: block;
+}
