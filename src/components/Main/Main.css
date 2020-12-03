@@ -29,15 +29,15 @@
 
 @media screen and (max-width: 768px) {
   .main__search-form {
-    min-height: -66px;
-    padding-top: -66px;
+    margin-top: -66px;
+    padding-top: 66px;
   }
 }
 
 @media screen and (max-width: 425px) {
   .main__search-form  {
-    min-height: -56px;
-    padding-top: -56px;
+    margin-top: -56px;
+    padding-top: 56px;
   }
 }
 
@@ -56,7 +56,7 @@
 
 .main__title {
   margin: 0 0 64px 0;
-  font-family: 'Roboto Slab';
+  font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
   font-weight: 400;
   font-size: 40px;
   line-height: 1.15;

@@ -14,14 +14,9 @@ function SearchForm({
   className: mix,
 }) {
   const [search, setSearch] = useState('');
-  const [isValid, setIsValid] = useState(false);
 
   const handleInput = (value) => {
     setSearch(value);
-  };
-
-  const handleValid = (e) => {
-    setIsValid(e.target.validity.valid);
   };
 
   const handleSubmit = (e) => {
@@ -40,7 +35,6 @@ function SearchForm({
           и&nbsp;сохраняйте в&nbsp;своём личном кабинете.
         </p>
         <form
-          onChange={handleValid}
           className={bem.get('form')}
           onSubmit={handleSubmit}
         >
@@ -55,7 +49,6 @@ function SearchForm({
             className={bem.get('button')}
             type="submit"
             radius="large"
-            disabled={!isValid}
           >Искать</Button>
         </form>
       </Container>

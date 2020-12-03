@@ -12,6 +12,7 @@ function Input({
   onChange,
   disabled,
   className: mix,
+  required,
 }) {
   const handleInput = (e) => {
     onChange(e.target.value);
@@ -26,7 +27,7 @@ function Input({
       type={type}
       disabled={disabled}
       minLength={2}
-      required
+      required={required}
     />
   );
 }

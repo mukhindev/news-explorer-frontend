@@ -71,6 +71,10 @@
   background-color: #347EFF;
 }
 
+.button_type_submit:active {
+  background-color: #2A65CC;
+}
+
 .button_outline {
   border: 1px solid #D1D2D6;
   border-color: #D1D2D6;

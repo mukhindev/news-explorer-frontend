@@ -43,7 +43,7 @@
 
 .saved-news-header__counter {
   margin: 28px 0 0;
-  font-family: 'Roboto Slab';
+  font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
   font-weight: 400;
   font-size: 40px;
   line-height: 1.15;

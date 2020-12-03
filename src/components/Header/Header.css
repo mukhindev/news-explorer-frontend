@@ -30,7 +30,7 @@
 
 @media screen and (max-width: 720px) {
   .header__container {
-    z-index: 1;
+    z-index: 2;
   }
 }
 
@@ -48,7 +48,7 @@
   width: 100%;
   box-sizing: border-box;
   background-color: #1A1B22;
-  z-index: 0;
+  z-index: 1;
   box-shadow: none;
   border-radius: 0 0 16px 16px;
 }
@@ -57,7 +57,7 @@
   content: '';
   display: block;
   position: absolute;
-  top: 66px;
+  top: 65px;
   left: 0;
   height: 1px;
   width: 100%;
@@ -71,7 +71,7 @@
   }
 
   .header__container_burger::before {
-    top: 56px;
+    top: 55px;
   }
 }
 
