@@ -1,0 +1,21 @@
+.container {
+  padding-left: 104px;
+  padding-right: 104px;
+  max-width: 1440px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 1024px) {
+  .container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
