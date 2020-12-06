@@ -16,7 +16,6 @@ function SavedNews({ cards, loggedIn }) {
   return (
     <main className={bem.get(null)}>
       <SavedNewsHeader
-        username="Сергей"
         tags={['Природа', 'Тайга', 'Слово-3', 'Слово-4', 'Слово-5']}
       />
       <Container className={bem.get('container')}>

@@ -1,39 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import SavedNews from '../SavedNews/SavedNews';
 import Footer from '../Footer/Footer';
 import Register from '../Register/Register';
-import PopupInfo from '../PopupInfo/PopupInfo';
+import Info from '../Info/Info';
 import Login from '../Login/Login';
 import getNews from '../../utils/newsApi';
-import { signUp, signIn } from '../../utils/mainApi';
-import { ReactComponent as SignOutIcon } from '../../images/sign-out.svg';
+import { signUp, signIn, getMe } from '../../utils/mainApi';
 import { ReactComponent as NotFountIcon } from '../../images/not-found.svg';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 import BemHandler from '../../utils/bem-handler';
 import './App.css';
 
 const bem = new BemHandler('app');
 
 function App() {
-  const [menu, setMenu] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
+  const [openedPopup, setOpenedPopup] = useState('');
   const [formMessage, setFormMessage] = useState('');
   const [news, setNews] = useState([]);
   const [searchMessage, setSearchMessage] = useState(null);
   const [pageTheme, setPageThene] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpenRegister, setIsOpenRegister] = useState(false);
-  const [isOpenPopupInfo, setIsOpenPopupInfo] = useState(false);
-  const [isOpenLogin, setIsOpenLogin] = useState(false);
   const { pathname } = useLocation();
-
-  const getMenu = (menu1, auth1) => (auth1
-    ? menu1
-    : menu1.filter((item) => item.auth !== true)
-  );
 
   useEffect(() => {
     const localArticles = localStorage.getItem('articles');
@@ -45,38 +37,6 @@ function App() {
     if (pathname === '/') setPageThene('dark');
     else setPageThene('');
   }, [pathname]);
-
-  useEffect(() => {
-    const buttonSignUp = {
-      type: 'button',
-      onClick: () => setIsOpenRegister(true),
-      name: 'Авторизоваться',
-    };
-
-    const buttonSignOut = {
-      type: 'button',
-      onClick: () => setLoggedIn(false),
-      name: 'Сергей',
-      iconComponent: SignOutIcon,
-    };
-
-    const initialMenu = [
-      {
-        type: 'link',
-        to: '/',
-        name: 'Главная',
-      },
-      {
-        type: 'link',
-        to: '/saved-news',
-        name: 'Сохранённые статьи',
-        auth: true,
-      },
-      !loggedIn ? buttonSignUp : buttonSignOut,
-    ];
-
-    setMenu(getMenu(initialMenu, loggedIn));
-  }, [loggedIn]);
 
   const handleSearchSubmit = async (search) => {
     setNews([]);
@@ -108,20 +68,40 @@ function App() {
     return setIsLoading(false);
   };
 
-  const closeAllPopups = () => {
-    setIsOpenRegister(false);
-    setIsOpenLogin(false);
-    setIsOpenPopupInfo(false);
+  const closePopup = () => {
+    setOpenedPopup('');
     setFormMessage('');
+  };
+
+  const checkToken = useCallback(async () => {
+    if (localStorage.getItem('token')) {
+      try {
+        const { user } = await getMe({ token: localStorage.getItem('token') });
+        if (user) {
+          setLoggedIn(true);
+          setCurrentUser(user);
+          closePopup();
+        }
+      } catch (error) {
+        handleLogOut();
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    checkToken();
+  }, [checkToken]);
+
+  const handleLogOut = () => {
+    localStorage.removeItem('token');
+    setLoggedIn(false);
+    setCurrentUser({});
   };
 
   const handleRegister = async ({ email, password, name }) => {
     try {
       const { user } = await signUp({ email, password, name });
-      if (user) {
-        closeAllPopups();
-        setIsOpenPopupInfo(true);
-      }
+      if (user) setOpenedPopup('info-success');
     } catch (error) {
       const { message } = await error;
       if (message) setFormMessage(message);
@@ -130,10 +110,11 @@ function App() {
 
   const handleLogin = async ({ email, password }) => {
     try {
-      const { user } = await signIn({ email, password });
-      if (user) {
-        setCurrentUser(user);
-        setLoggedIn(true);
+      const { token } = await signIn({ email, password });
+      if (token) {
+        closePopup();
+        localStorage.setItem('token', token);
+        checkToken();
       }
     } catch (error) {
       const { message } = await error;
@@ -141,58 +122,83 @@ function App() {
     }
   };
 
+  const getPopup = (name) => {
+    switch (name) {
+      case 'register':
+        return (
+          <Register
+            isOpen
+            onClose={closePopup}
+            onSubmit={handleRegister}
+            formMessage={formMessage}
+            onValid={() => setFormMessage('')}
+            onReplaceForm={() => {
+              setFormMessage('');
+              setOpenedPopup('login');
+            }}
+          />
+        );
+      case 'login':
+        return (
+          <Login
+            isOpen
+            onClose={closePopup}
+            onSubmit={handleLogin}
+            formMessage={formMessage}
+            onValid={() => setFormMessage('')}
+            onReplaceForm={() => {
+              setFormMessage('');
+              setOpenedPopup('register');
+            }}
+          />
+        );
+      case 'info-success':
+        return (
+          <Info
+            isOpen
+            onClose={closePopup}
+            title="Пользователь успешно зарегистрирован!"
+            linkText="Войти"
+            onClick={() => setOpenedPopup('login')}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className={bem.get(null)}>
-      <Header
-        theme={pageTheme}
-        menu={menu}
-        blocked={isOpenRegister}
-      />
-      <Switch>
-        <Route path="/" exact>
-          <Main
-            theme={pageTheme}
-            cards={news}
-            message={searchMessage}
-            loggedIn={loggedIn}
-            isLoading={isLoading}
-            onSearchSubmit={handleSearchSubmit}
-          />
-        </Route>
-        <Route path="/saved-news">
-          <SavedNews
-            cards={[]}
-            loggedIn={loggedIn}
-            isLoading={isLoading}
-          />
-        </Route>
-      </Switch>
-      <Footer />
-      <Register
-        isOpen={isOpenRegister}
-        onClose={closeAllPopups}
-        onSubmit={handleRegister}
-        formMessage={formMessage}
-        onValid={() => setFormMessage('')}
-      />
-      <PopupInfo
-        isOpen={isOpenPopupInfo}
-        onClose={closeAllPopups}
-        title="Пользователь успешно зарегистрирован!"
-        linkText="Войти"
-        onLinkClick={() => {
-          closeAllPopups();
-          setIsOpenLogin(true);
-        }}
-      />
-      <Login
-        isOpen={isOpenLogin}
-        onClose={closeAllPopups}
-        onSubmit={handleLogin}
-        formMessage={formMessage}
-        onValid={() => setFormMessage('')}
-      />
-    </div>
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className={bem.get(null)}>
+        <Header
+          theme={pageTheme}
+          blocked={openedPopup}
+          onAuth={() => setOpenedPopup('register')}
+          onLogOut={handleLogOut}
+        />
+        <Switch>
+          <Route path="/" exact>
+            <Main
+              theme={pageTheme}
+              cards={news}
+              message={searchMessage}
+              loggedIn={loggedIn}
+              isLoading={isLoading}
+              onSearchSubmit={handleSearchSubmit}
+            />
+          </Route>
+          <Route path="/saved-news">
+            <SavedNews
+              cards={[]}
+              loggedIn={loggedIn}
+              isLoading={isLoading}
+            />
+          </Route>
+        </Switch>
+        <Footer />
+        {getPopup(openedPopup)}
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 

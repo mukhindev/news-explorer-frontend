@@ -1,15 +1,15 @@
 import PopupWithForm from '../PopupWithForm/PopupWithForm';
 import BemHandler from '../../utils/bem-handler';
-import './PopupInfo.css';
+import './Info.css';
 
-const bem = new BemHandler('popup-info');
+const bem = new BemHandler('info');
 
-function PopupInfo({
+function Info({
   isOpen,
   onClose,
   title,
   linkText,
-  onLinkClick,
+  onClick,
 }) {
   return (
     <PopupWithForm
@@ -20,7 +20,7 @@ function PopupInfo({
       {linkText && (
         <span
           className={bem.get('')}
-          onClick={onLinkClick}
+          onClick={onClick}
         >
           {linkText}
         </span>
@@ -29,4 +29,4 @@ function PopupInfo({
   );
 }
 
-export default PopupInfo;
+export default Info;

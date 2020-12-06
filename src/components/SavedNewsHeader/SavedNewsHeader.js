@@ -1,13 +1,16 @@
+import { useContext } from 'react';
 import Container from '../Container/Container';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 import BemHandler from '../../utils/bem-handler';
 import './SavedNewsHeader.css';
 
 const bem = new BemHandler('saved-news-header');
 
 function SavedNewsHeader({
-  username = '',
   tags = [],
 }) {
+  const { name: username } = useContext(CurrentUserContext);
+
   return (
     <div className={bem.get(null)}>
       <Container className={bem.get('container')}>

@@ -10,8 +10,8 @@ function Form({
   onSubmit,
   fields,
   buttonText,
-  alternativeText,
-  alternativeOnClick,
+  replacementFormText,
+  onReplaceForm,
   message,
   onValid,
 }) {
@@ -74,13 +74,13 @@ function Form({
       >
         {buttonText}
       </Button>
-      {!!alternativeText && (
+      {!!replacementFormText && (
         <p className={bem.get('alternative')}>
           или&nbsp;
           <span
             className={bem.get('alternative-span')}
-            onClick={alternativeOnClick}>
-            {alternativeText}
+            onClick={onReplaceForm}>
+            {replacementFormText}
           </span>
         </p>
       )}

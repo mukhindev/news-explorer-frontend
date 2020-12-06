@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import Container from '../Container/Container';
 import SearchForm from '../SearchForm/SearchForm';
 import NewsCardList from '../NewsCardList/NewsCardList';
 import About from '../About/About';
 import Button from '../Button/Button';
 import Preloader from '../Preloader/Preloader';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 import BemHandler from '../../utils/bem-handler';
 import './Main.css';
 
@@ -18,6 +19,7 @@ function Main({
   isLoading,
   message,
 }) {
+  const { name } = useContext(CurrentUserContext);
   const MessageIcon = message?.icon || (() => null);
   const [numberOfCards, setNumberOfCards] = useState(3);
 

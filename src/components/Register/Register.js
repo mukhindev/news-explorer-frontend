@@ -7,6 +7,7 @@ function Register({
   onSubmit,
   onValid,
   onClose,
+  onReplaceForm,
   formMessage,
 }) {
   const [email, setEmail] = useState('');
@@ -68,8 +69,8 @@ function Register({
         onSubmit={handleSubmit}
         onValid={onValid}
         message={formMessage}
-        alternativeText="Войти"
-        alternativeOnClick={() => console.log('Клик по альтернативе')}
+        replacementFormText="Войти"
+        onReplaceForm={onReplaceForm}
       />
     </PopupWithForm>
   );

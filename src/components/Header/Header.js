@@ -8,7 +8,12 @@ import './Header.css';
 const MOBILE_WIDTH = 720;
 const bem = new BemHandler('header');
 
-function Header({ theme, menu, blocked }) {
+function Header({
+  theme,
+  blocked,
+  onLogOut,
+  onAuth,
+}) {
   const [burger, setBurger] = useState(false);
   const [isBurgerOpened, isSetBurgerOpened] = useState(false);
 
@@ -29,7 +34,11 @@ function Header({ theme, menu, blocked }) {
   }, []);
 
   const navigation = !burger
-    ? (<Navigation menu={menu} theme={theme} />)
+    ? (<Navigation
+      theme={theme}
+      onAuth={onAuth}
+      onLogOut={onLogOut}
+      />)
     : (
       <button
         className={bem.get('burger-buttom', {
@@ -49,7 +58,11 @@ function Header({ theme, menu, blocked }) {
       </Container>
       {isBurgerOpened && (
         <Container className={bem.get('container', { burger: isBurgerOpened })}>
-          <Navigation menu={menu} theme={'dark'} burger />
+          <Navigation
+            theme={'dark'}
+            onAuth={onAuth}
+            onLogOut={onLogOut}
+            burger />
         </Container>
       )}
     </header>

@@ -12,7 +12,7 @@ export default class Api {
 
   setHeaders = ({ token }) => {
     const headers = this.defaultHeaders;
-    if (token) headers.Authorization = this.addAuthHeader(token);
+    if (token) headers.Authorization = this.setAuthHeader(token);
     return headers;
   }
 
