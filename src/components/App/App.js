@@ -4,57 +4,42 @@ import Header from '../Header/Header';
 import Main from '../Main/Main';
 import SavedNews from '../SavedNews/SavedNews';
 import Footer from '../Footer/Footer';
+import Register from '../Register/Register';
+import PopupInfo from '../PopupInfo/PopupInfo';
+import Login from '../Login/Login';
+import getNews from '../../utils/newsApi';
+import { signUp, signIn } from '../../utils/mainApi';
 import { ReactComponent as SignOutIcon } from '../../images/sign-out.svg';
+import { ReactComponent as NotFountIcon } from '../../images/not-found.svg';
 import BemHandler from '../../utils/bem-handler';
 import './App.css';
-import PopupWithForm from '../PopupWithForm/PopupWithForm';
-
-// Временные данные
-const fakeData = {
-  cards: [
-    {
-      id: 1,
-      image: 'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=2250&q=80',
-      date: '2 августа, 2019',
-      title: 'Национальное достояние – парки',
-      annotation: 'В 2016 году Америка отмечала важный юбилей: сто лет назад здесь начала складываться система национальных парков – охраняемых территорий, где и сегодня каждый может приобщиться к природе.',
-      source: 'Лента.ру',
-    },
-    {
-      id: 2,
-      image: 'https://images.unsplash.com/photo-1582409836310-37c46af8dfee?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=934&q=80',
-      date: '2 августа, 2019',
-      title: 'Лесные огоньки: история одной фотографии',
-      annotation: 'Фотограф отвлеклась от освещения суровой политической реальности Мексики, чтобы запечатлеть ускользающую красоту одного из местных чудес природы.',
-      source: 'Медуза',
-    },
-    {
-      id: 3,
-      image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=2250&q=80',
-      date: '2 августа, 2019',
-      title: '«Первозданная тайга»: новый фотопроект Игоря Шпиленка',
-      annotation: 'Знаменитый фотограф снимает первозданные леса России, чтобы рассказать о необходимости их сохранения. В этот раз он отправился в Двинско-Пинежскую тайгу, где...',
-      source: 'Риа',
-    },
-  ],
-};
 
 const bem = new BemHandler('app');
 
 function App() {
   const [menu, setMenu] = useState([]);
-  const [loggedIn, setLoggedIn] = useState(true);
-  const [searchResults, setSearchResults] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState({});
+  const [formMessage, setFormMessage] = useState('');
+  const [news, setNews] = useState([]);
+  const [searchMessage, setSearchMessage] = useState(null);
   const [pageTheme, setPageThene] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-
+  const [isOpenRegister, setIsOpenRegister] = useState(false);
+  const [isOpenPopupInfo, setIsOpenPopupInfo] = useState(false);
+  const [isOpenLogin, setIsOpenLogin] = useState(false);
   const { pathname } = useLocation();
 
   const getMenu = (menu1, auth1) => (auth1
     ? menu1
     : menu1.filter((item) => item.auth !== true)
   );
+
+  useEffect(() => {
+    const localArticles = localStorage.getItem('articles');
+    if (!localArticles) return;
+    setNews(JSON.parse(localArticles));
+  }, []);
 
   useEffect(() => {
     if (pathname === '/') setPageThene('dark');
@@ -64,7 +49,7 @@ function App() {
   useEffect(() => {
     const buttonSignUp = {
       type: 'button',
-      onClick: () => setIsPopupOpen(true),
+      onClick: () => setIsOpenRegister(true),
       name: 'Авторизоваться',
     };
 
@@ -93,34 +78,82 @@ function App() {
     setMenu(getMenu(initialMenu, loggedIn));
   }, [loggedIn]);
 
-  const handleSearchSubmit = (search) => {
-    // Имитация загрузки
-    setSearchResults([]);
+  const handleSearchSubmit = async (search) => {
+    setNews([]);
+    setSearchMessage(null);
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setSearchResults(fakeData.cards);
-    }, 2000);
+    try {
+      const { articles } = await getNews(search);
+      if (articles.length) {
+        setNews(articles);
+        localStorage.setItem('articles', JSON.stringify(articles));
+      } else {
+        setSearchMessage({
+          icon: NotFountIcon,
+          title: 'Ничего не\u00A0найдено',
+          subtitle: 'К сожалению по\u00A0вашему запросу ничего не\u00A0найдено.',
+        });
+        setNews([]);
+        localStorage.setItem('articles', JSON.stringify([]));
+      }
+    } catch (error) {
+      setSearchMessage({
+        icon: NotFountIcon,
+        title: 'Ошибка',
+        subtitle: 'Во время запроса произошла ошибка. Возможно, проблема с\u00A0соединением или сервер недоступен. Подождите немного и попробуйте ещё раз.',
+      });
+      setNews([]);
+      localStorage.setItem('articles', JSON.stringify([]));
+    }
+    return setIsLoading(false);
   };
 
-  const handlePopupClose = () => {
-    setIsPopupOpen(false);
+  const closeAllPopups = () => {
+    setIsOpenRegister(false);
+    setIsOpenLogin(false);
+    setIsOpenPopupInfo(false);
+    setFormMessage('');
   };
 
-  const handleAuthSubmit = () => {};
+  const handleRegister = async ({ email, password, name }) => {
+    try {
+      const { user } = await signUp({ email, password, name });
+      if (user) {
+        closeAllPopups();
+        setIsOpenPopupInfo(true);
+      }
+    } catch (error) {
+      const { message } = await error;
+      if (message) setFormMessage(message);
+    }
+  };
+
+  const handleLogin = async ({ email, password }) => {
+    try {
+      const { user } = await signIn({ email, password });
+      if (user) {
+        setCurrentUser(user);
+        setLoggedIn(true);
+      }
+    } catch (error) {
+      const { message } = await error;
+      if (message) setFormMessage(message);
+    }
+  };
 
   return (
     <div className={bem.get(null)}>
       <Header
         theme={pageTheme}
         menu={menu}
-        blocked={isPopupOpen}
+        blocked={isOpenRegister}
       />
       <Switch>
         <Route path="/" exact>
           <Main
             theme={pageTheme}
-            cards={searchResults}
+            cards={news}
+            message={searchMessage}
             loggedIn={loggedIn}
             isLoading={isLoading}
             onSearchSubmit={handleSearchSubmit}
@@ -128,17 +161,36 @@ function App() {
         </Route>
         <Route path="/saved-news">
           <SavedNews
-            cards={fakeData.cards}
+            cards={[]}
             loggedIn={loggedIn}
             isLoading={isLoading}
           />
         </Route>
       </Switch>
       <Footer />
-      <PopupWithForm
-        isOpen={isPopupOpen}
-        onClose={handlePopupClose}
-        onSubmit={handleAuthSubmit}
+      <Register
+        isOpen={isOpenRegister}
+        onClose={closeAllPopups}
+        onSubmit={handleRegister}
+        formMessage={formMessage}
+        onValid={() => setFormMessage('')}
+      />
+      <PopupInfo
+        isOpen={isOpenPopupInfo}
+        onClose={closeAllPopups}
+        title="Пользователь успешно зарегистрирован!"
+        linkText="Войти"
+        onLinkClick={() => {
+          closeAllPopups();
+          setIsOpenLogin(true);
+        }}
+      />
+      <Login
+        isOpen={isOpenLogin}
+        onClose={closeAllPopups}
+        onSubmit={handleLogin}
+        formMessage={formMessage}
+        onValid={() => setFormMessage('')}
       />
     </div>
   );

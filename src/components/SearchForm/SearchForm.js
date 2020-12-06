@@ -37,6 +37,7 @@ function SearchForm({
         <form
           className={bem.get('form')}
           onSubmit={handleSubmit}
+          noValidate
         >
           <Input
             className={bem.get('input')}
@@ -44,6 +45,9 @@ function SearchForm({
             placeholder="Введите тему новости"
             radius="large"
             onChange={handleInput}
+            required
+            search
+            noValidate
           />
           <Button
             className={bem.get('button')}

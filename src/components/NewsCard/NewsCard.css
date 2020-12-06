@@ -6,8 +6,18 @@
   background-color: #fff;
 }
 
+.news-card__link {
+  color: #1A1B22;
+  text-decoration: none;
+}
+
 .news-card:hover {
   box-shadow: 0 0 64px -64px #000;
+}
+
+.news-link {
+  color: #1A1B22;
+  text-decoration: underline;
 }
 
 .news-card__header {

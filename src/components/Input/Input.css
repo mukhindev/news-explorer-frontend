@@ -1,4 +1,19 @@
 .input {
+  width: 100%;
+}
+
+.input__label {
+  margin: 0 0 5px;
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #2F71E5;
+}
+
+.input__field {
+  width: 100%;
+  box-sizing: border-box;
   font: inherit;
   font-size: 16px;
   box-sizing: border-box;
@@ -11,19 +26,38 @@
   outline: none;
 }
 
-.input::placeholder {
+.input__field_search {
+  width: 100%;
+  padding: 0 192px 0 24px;
+}
+
+@media screen and (max-width: 768px) {
+  .input__field_search {
+    padding: 0 184px 0 24px;
+    min-height: 56px;
+  }
+}
+
+
+@media screen and (max-width: 425px) {
+  .input__field_search {
+    padding: 0 24px;
+  }
+}
+
+.input__field::placeholder {
   color: #B6BCBF;
 }
 
-.input:focus {
+.input__field:focus {
   box-shadow: 0 0 0 3px rgba(0, 150, 255, 0.4);
 }
 
-.input_radius_large {
+.input__field_radius_large {
   border-radius: 64px;
 }
 
-.input_underline {
+.input__field_underline {
   padding: 0;
   min-height: 32px;
   box-shadow: inset 0 -1px rgba(0, 0, 0, 0.2);
@@ -35,7 +69,7 @@
   outline: none;
 }
 
-.input_underline:focus {
+.input__field_underline:focus {
   padding: 0;
   min-height: 32px;
   font-style: normal;
@@ -46,8 +80,18 @@
   box-shadow: inset 0 -1px #000000;
 }
 
-.input_disabled {
+.input__field_disabled {
   color: #B6BCBF;
   background-color: #E6E8EB;
   pointer-events: none;
+}
+
+.input__message {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #FF0000;
+  height: 0;
+  display: block;
+  transform: translateY(6px);
 }

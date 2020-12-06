@@ -88,3 +88,32 @@
     min-width: 100%;
   }
 }
+
+.main__message-icon {
+  display: block;
+  margin: 0 auto;
+  width: 96px;
+  height: 96px;
+  color: #D1D2D6;
+}
+
+.main__message-title {
+  font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.15;
+  text-align: center;
+  max-width: 320px;
+  margin: 24px auto 0;
+}
+
+.main__message-subtitle {
+  margin: 24px 0 0;
+  text-align: center;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.33;
+  color: #B6BCBF;
+  max-width: 320px;
+  margin: 16px auto 0;
+}

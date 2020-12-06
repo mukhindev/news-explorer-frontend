@@ -1,0 +1,44 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form__input {
+  width: 100%;
+  margin-bottom: 36px;
+}
+
+.form__alternative {
+  margin: 16px 0 0;
+  text-align: center;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.33;
+  color: #000000;
+}
+
+.form__alternative-span {
+  margin: 16px 0 0;
+  text-align: center;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.33;
+  color: #2F71E5;
+  cursor: pointer;
+  transform: opacity 0.2s;
+}
+
+.form__alternative-span:hover {
+  opacity: 0.7;
+}
+
+.form__message {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #FF0000;
+  height: 0;
+  display: block;
+  transform: translateY(-22px);
+  text-align: center;
+}

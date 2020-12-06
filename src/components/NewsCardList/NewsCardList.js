@@ -7,9 +7,9 @@ const bem = new BemHandler('news-card-list');
 function NewsCardList({ cards, loggedIn }) {
   return (
     <div className={bem.get(null)}>
-        {cards.map((card) => (
+        {cards.map((card, index) => (
           <NewsCard
-            key={card.id}
+            key={index}
             card={card}
             loggedIn={loggedIn}
           />
