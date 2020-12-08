@@ -22,7 +22,7 @@ function Main({
   onMark,
   onDelete,
 }) {
-  const { name } = useContext(CurrentUserContext);
+  useContext(CurrentUserContext);
   const MessageIcon = message?.icon || (() => null);
   const [numberOfCards, setNumberOfCards] = useState(3);
 

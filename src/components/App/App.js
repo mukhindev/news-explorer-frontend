@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import {
+  Switch, Route, Redirect, useLocation,
+} from 'react-router-dom';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
+import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import SavedNews from '../SavedNews/SavedNews';
 import Footer from '../Footer/Footer';
 import Register from '../Register/Register';
@@ -20,8 +23,6 @@ import { ReactComponent as NotFountIcon } from '../../images/not-found.svg';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import BemHandler from '../../utils/bem-handler';
 import './App.css';
-
-// TODO: Нужно в API сделать изображения необязательным полем
 
 const bem = new BemHandler('app');
 
@@ -58,10 +59,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (pathname === '/saved-news') {
+    if (loggedIn && pathname === '/saved-news') {
       fetchSavedArticles();
     }
-  }, [pathname, fetchSavedArticles]);
+  }, [pathname, loggedIn, fetchSavedArticles]);
 
   const handleSearchSubmit = async (search) => {
     setNews([]);
@@ -197,13 +198,14 @@ function App() {
         const updatedSavedNews = savedNews.filter(({ _id }) => _id !== id);
         setSavedNews(updatedSavedNews);
         const index = news.findIndex(({ _id }) => _id === id);
-        const updatedFoundNews = [...news];
-        // eslint-disable-next-line no-underscore-dangle
-        updatedFoundNews[index]._id = null;
-        setNews(updatedFoundNews);
-        localStorage.setItem('articles', JSON.stringify(updatedFoundNews));
+        if (index !== -1) {
+          const updatedFoundNews = [...news];
+          // eslint-disable-next-line no-underscore-dangle
+          updatedFoundNews[index]._id = null;
+          setNews(updatedFoundNews);
+          localStorage.setItem('articles', JSON.stringify(updatedFoundNews));
+        }
       }
-      console.log(await article);
     } catch (error) {
       // TODO: Показывать ошибку
       console.log(await error);
@@ -278,13 +280,16 @@ function App() {
               onDelete={onDeleteCard}
             />
           </Route>
-          <Route path="/saved-news">
-            <SavedNews
-              cards={savedNews}
-              loggedIn={loggedIn}
-              isLoading={isLoading}
-              onDelete={onDeleteCard}
-            />
+          <ProtectedRoute
+            path="/saved-news"
+            component={SavedNews}
+            cards={savedNews}
+            loggedIn={loggedIn}
+            isLoading={isLoading}
+            onDelete={onDeleteCard}
+          />
+          <Route path="/*">
+            <Redirect to="/" />
           </Route>
         </Switch>
         <Footer />

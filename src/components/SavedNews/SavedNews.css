@@ -2,6 +2,10 @@
   background-color: #F5F6F7;
 }
 
+.saved-news__preloader {
+  margin: 0 auto;
+}
+
 .saved-news__container {
   padding-top: 62px;
   padding-bottom: 62px;

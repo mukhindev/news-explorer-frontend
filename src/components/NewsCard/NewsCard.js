@@ -14,6 +14,7 @@ function NewsCard({
   onAuth,
   onMark,
   onDelete,
+  isShowKeyword,
 }) {
   const {
     _id: id,
@@ -24,7 +25,6 @@ function NewsCard({
     source,
     link,
     image: acticleImage,
-    isShowKeyword,
   } = card;
   const [image, setImage] = useState(acticleImage);
   const { pathname } = useLocation();
