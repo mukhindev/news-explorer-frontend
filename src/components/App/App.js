@@ -8,11 +8,20 @@ import Register from '../Register/Register';
 import Info from '../Info/Info';
 import Login from '../Login/Login';
 import getNews from '../../utils/newsApi';
-import { signUp, signIn, getMe } from '../../utils/mainApi';
+import {
+  signUp,
+  signIn,
+  getMe,
+  createActicle,
+  getSavedArticles,
+  deteleSavedArticle,
+} from '../../utils/mainApi';
 import { ReactComponent as NotFountIcon } from '../../images/not-found.svg';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import BemHandler from '../../utils/bem-handler';
 import './App.css';
+
+// TODO: Нужно в API сделать изображения необязательным полем
 
 const bem = new BemHandler('app');
 
@@ -22,6 +31,7 @@ function App() {
   const [openedPopup, setOpenedPopup] = useState('');
   const [formMessage, setFormMessage] = useState('');
   const [news, setNews] = useState([]);
+  const [savedNews, setSavedNews] = useState([]);
   const [searchMessage, setSearchMessage] = useState(null);
   const [pageTheme, setPageThene] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +48,21 @@ function App() {
     else setPageThene('');
   }, [pathname]);
 
+  const fetchSavedArticles = useCallback(async () => {
+    try {
+      const { articles } = await getSavedArticles({ token: localStorage.getItem('token') });
+      if (articles) setSavedNews(articles);
+    } catch (error) {
+      console.log(await error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (pathname === '/saved-news') {
+      fetchSavedArticles();
+    }
+  }, [pathname, fetchSavedArticles]);
+
   const handleSearchSubmit = async (search) => {
     setNews([]);
     setSearchMessage(null);
@@ -45,8 +70,27 @@ function App() {
     try {
       const { articles } = await getNews(search);
       if (articles.length) {
-        setNews(articles);
-        localStorage.setItem('articles', JSON.stringify(articles));
+        const mapArticles = articles.map((article) => {
+          const {
+            title,
+            description,
+            publishedAt,
+            source,
+            url,
+            urlToImage,
+          } = article;
+          return {
+            keyword: search,
+            title,
+            text: description,
+            date: publishedAt,
+            source: source.name,
+            link: url,
+            image: urlToImage || 'https://newsexplorer.mukhin.dev/images/default.jpg',
+          };
+        });
+        setNews(mapArticles);
+        localStorage.setItem('articles', JSON.stringify(mapArticles));
       } else {
         setSearchMessage({
           icon: NotFountIcon,
@@ -95,6 +139,8 @@ function App() {
   const handleLogOut = () => {
     localStorage.removeItem('token');
     setLoggedIn(false);
+    setNews([]);
+    setSavedNews([]);
     setCurrentUser({});
   };
 
@@ -119,6 +165,48 @@ function App() {
     } catch (error) {
       const { message } = await error;
       if (message) setFormMessage(message);
+    }
+  };
+
+  const onMarkCard = async (card) => {
+    const newsIndex = (news.indexOf(card));
+    try {
+      const { article } = await createActicle({
+        token: localStorage.getItem('token'),
+        ...card,
+      });
+      if (article) {
+        const updatedNews = [...news];
+        updatedNews[newsIndex] = article;
+        setNews(updatedNews);
+        localStorage.setItem('articles', JSON.stringify(updatedNews));
+      }
+    } catch (error) {
+      // TODO: Показывать ошибку
+      console.log(await error);
+    }
+  };
+
+  const onDeleteCard = async ({ _id: id }) => {
+    try {
+      const { article } = await deteleSavedArticle({
+        token: localStorage.getItem('token'),
+        id,
+      });
+      if (article) {
+        const updatedSavedNews = savedNews.filter(({ _id }) => _id !== id);
+        setSavedNews(updatedSavedNews);
+        const index = news.findIndex(({ _id }) => _id === id);
+        const updatedFoundNews = [...news];
+        // eslint-disable-next-line no-underscore-dangle
+        updatedFoundNews[index]._id = null;
+        setNews(updatedFoundNews);
+        localStorage.setItem('articles', JSON.stringify(updatedFoundNews));
+      }
+      console.log(await article);
+    } catch (error) {
+      // TODO: Показывать ошибку
+      console.log(await error);
     }
   };
 
@@ -185,13 +273,17 @@ function App() {
               loggedIn={loggedIn}
               isLoading={isLoading}
               onSearchSubmit={handleSearchSubmit}
+              onAuth={() => setOpenedPopup('register')}
+              onMark={onMarkCard}
+              onDelete={onDeleteCard}
             />
           </Route>
           <Route path="/saved-news">
             <SavedNews
-              cards={[]}
+              cards={savedNews}
               loggedIn={loggedIn}
               isLoading={isLoading}
+              onDelete={onDeleteCard}
             />
           </Route>
         </Switch>

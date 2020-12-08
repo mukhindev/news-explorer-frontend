@@ -51,4 +51,16 @@ export default class Api {
     });
     return this.handleResponse(res);
   }
+
+  delete = async ({
+    handle,
+    token,
+    params,
+  }) => {
+    const res = await fetch(`${this.url}${handle}${this.setParams(params)}`, {
+      method: 'DELETE',
+      headers: this.setHeaders({ token }),
+    });
+    return this.handleResponse(res);
+  }
 }

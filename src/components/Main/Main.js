@@ -18,6 +18,9 @@ function Main({
   loggedIn,
   isLoading,
   message,
+  onAuth,
+  onMark,
+  onDelete,
 }) {
   const { name } = useContext(CurrentUserContext);
   const MessageIcon = message?.icon || (() => null);
@@ -25,7 +28,7 @@ function Main({
 
   useEffect(() => {
     setNumberOfCards(3);
-  }, [cards]);
+  }, []);
 
   return (
     <main className={bem.get(null)}>
@@ -58,6 +61,9 @@ function Main({
           <NewsCardList
             cards={cards.slice(0, numberOfCards)}
             loggedIn={loggedIn}
+            onAuth={onAuth}
+            onMark={onMark}
+            onDelete={onDelete}
           />
           {cards.length >= numberOfCards && (
             <Button

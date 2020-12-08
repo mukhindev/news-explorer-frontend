@@ -16,3 +16,36 @@ export const getMe = ({ token }) => mainApi.get({
   handle: '/users/me',
   token,
 });
+
+export const createActicle = ({
+  token,
+  keyword,
+  title,
+  text,
+  date,
+  source,
+  link,
+  image,
+}) => mainApi.post({
+  handle: '/articles',
+  token,
+  body: {
+    keyword,
+    title,
+    text,
+    date,
+    source,
+    link,
+    image,
+  },
+});
+
+export const getSavedArticles = ({ token }) => mainApi.get({
+  handle: '/articles',
+  token,
+});
+
+export const deteleSavedArticle = ({ id, token }) => mainApi.delete({
+  handle: `/articles/${id}`,
+  token,
+});

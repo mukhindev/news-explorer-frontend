@@ -6,13 +6,11 @@ import './SavedNews.css';
 
 const bem = new BemHandler('saved-news');
 
-function SavedNews({ cards, loggedIn }) {
-  const savedCards = cards.map((card) => ({
-    ...card,
-    tag: 'Природа',
-    isMarked: true,
-  }));
-
+function SavedNews({
+  cards,
+  loggedIn,
+  onDelete,
+}) {
   return (
     <main className={bem.get(null)}>
       <SavedNewsHeader
@@ -20,8 +18,10 @@ function SavedNews({ cards, loggedIn }) {
       />
       <Container className={bem.get('container')}>
         <NewsCardList
-          cards={savedCards}
+          cards={cards}
           loggedIn={loggedIn}
+          onDelete={onDelete}
+          isShowKeyword
         />
       </Container>
     </main>
