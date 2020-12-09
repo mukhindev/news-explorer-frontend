@@ -21,7 +21,8 @@ function SearchForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(search);
+    setSearch(search.trim());
+    onSubmit(search.trim());
   };
 
   return (
@@ -47,6 +48,7 @@ function SearchForm({
             onChange={handleInput}
             required
             search
+            value={search}
             noValidate
           />
           <Button

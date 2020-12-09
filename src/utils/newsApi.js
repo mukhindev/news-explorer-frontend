@@ -1,6 +1,7 @@
 import Api from './Api';
+import { NEWS_API_SERVER, NEWS_API_KEY } from './constants';
 
-const newsApi = new Api('https://nomoreparties.co/news/v2');
+const newsApi = new Api(NEWS_API_SERVER);
 
 const getNews = (search) => {
   const date = new Date();
@@ -16,7 +17,7 @@ const getNews = (search) => {
       from: dateFrom,
       to: dateTo,
       pageSize: 100,
-      apiKey: '6c4dba1d28d94b279d53efb88c7230c1',
+      apiKey: NEWS_API_KEY,
     },
   });
 };

@@ -7,6 +7,7 @@ const bem = new BemHandler('input');
 function Input({
   type = 'text',
   placeholder = '',
+  value,
   radius,
   underline,
   search,
@@ -53,6 +54,7 @@ function Input({
         maxLength={maxLength}
         required={required}
         noValidate={noValidate}
+        value={value}
       />
       {message && !noValidate && (
         <span className={bem.get('message')}>

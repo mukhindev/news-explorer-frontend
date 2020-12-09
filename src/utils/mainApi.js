@@ -1,6 +1,7 @@
 import Api from './Api';
+import { MAIN_API_SERVER } from './constants';
 
-const mainApi = new Api('https://api.newsexplorer.mukhin.dev');
+const mainApi = new Api(MAIN_API_SERVER);
 
 export const signUp = ({ email, password, name }) => mainApi.post({
   handle: '/signup',

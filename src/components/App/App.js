@@ -65,6 +65,12 @@ function App() {
   }, [pathname, loggedIn, fetchSavedArticles]);
 
   const handleSearchSubmit = async (search) => {
+    if (!search.length) {
+      return setSearchMessage({
+        title: 'Введите тему новости',
+        subtitle: 'Необходимо ввести ключевое слово для поиска новостей',
+      });
+    }
     setNews([]);
     setSearchMessage(null);
     setIsLoading(true);
@@ -311,6 +317,7 @@ function App() {
           </Route>
           <ProtectedRoute
             path="/saved-news"
+            onRedirect={() => setOpenedPopup('register')}
             component={SavedNews}
             cards={savedNews}
             loggedIn={loggedIn}
