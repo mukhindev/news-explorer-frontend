@@ -1,9 +1,11 @@
+import { useContext, useState, useEffect } from 'react';
 import Container from '../Container/Container';
 import SearchForm from '../SearchForm/SearchForm';
 import NewsCardList from '../NewsCardList/NewsCardList';
 import About from '../About/About';
 import Button from '../Button/Button';
 import Preloader from '../Preloader/Preloader';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 import BemHandler from '../../utils/bem-handler';
 import './Main.css';
 
@@ -15,7 +17,19 @@ function Main({
   onSearchSubmit,
   loggedIn,
   isLoading,
+  message,
+  onAuth,
+  onMark,
+  onDelete,
 }) {
+  useContext(CurrentUserContext);
+  const MessageIcon = message?.icon || (() => null);
+  const [numberOfCards, setNumberOfCards] = useState(3);
+
+  useEffect(() => {
+    setNumberOfCards(3);
+  }, []);
+
   return (
     <main className={bem.get(null)}>
       <SearchForm
@@ -30,17 +44,36 @@ function Main({
           <p className={bem.get('preloader-caption')}>Идёт поиск новостей...</p>
         </Container>
       )}
+      {message && (
+        <Container className={bem.get('container')}>
+          <MessageIcon className={bem.get('message-icon')} />
+          <p className={bem.get('message-title')} >
+            {message.title}
+          </p>
+          <p className={bem.get('message-subtitle')} >
+            {message.subtitle}
+          </p>
+        </Container>
+      )}
       {!!cards.length && (
         <Container className={bem.get('container')}>
           <h2 className={bem.get('title')}>Результаты поиска</h2>
           <NewsCardList
-            cards={cards}
+            cards={cards.slice(0, numberOfCards)}
             loggedIn={loggedIn}
+            onAuth={onAuth}
+            onMark={onMark}
+            onDelete={onDelete}
           />
-          <Button
-            className={bem.get('more-button')}
-            radius="large">Показать ещё
-          </Button>
+          {cards.length >= numberOfCards && (
+            <Button
+              className={bem.get('more-button')}
+              radius="large"
+              onClick={() => setNumberOfCards(numberOfCards + 3)}
+            >
+              Показать ещё
+            </Button>
+          )}
         </Container>
       )}
       <About />

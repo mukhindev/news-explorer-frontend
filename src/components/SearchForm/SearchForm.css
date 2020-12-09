@@ -81,25 +81,6 @@
   }
 }
 
-.search-form__input {
-  width: 100%;
-  padding: 0 192px 0 24px;
-}
-
-@media screen and (max-width: 768px) {
-  .search-form__input {
-    padding: 0 184px 0 24px;
-    min-height: 56px;
-  }
-}
-
-
-@media screen and (max-width: 425px) {
-  .search-form__input {
-    padding: 0 24px;
-  }
-}
-
 .search-form__button {
   min-width: 168px;
   position: absolute;

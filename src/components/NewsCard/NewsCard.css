@@ -4,10 +4,16 @@
   display: flex;
   flex-direction: column;
   background-color: #fff;
+  cursor: pointer;
 }
 
 .news-card:hover {
   box-shadow: 0 0 64px -64px #000;
+}
+
+.news-link {
+  color: #1A1B22;
+  text-decoration: underline;
 }
 
 .news-card__header {
@@ -103,7 +109,7 @@
   }
 }
 
-.news-card__tag-button {
+.news-card__keyword-button {
   min-height: 40px;
   padding: 0 16px;
 }

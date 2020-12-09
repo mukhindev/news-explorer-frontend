@@ -1,12 +1,58 @@
+import { useContext, useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import BemHandler from '../../utils/bem-handler';
 import Button from '../Button/Button';
+import { ReactComponent as SignOutIcon } from '../../images/sign-out.svg';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
+import BemHandler from '../../utils/bem-handler';
 import './Navigation.css';
 
 const bem = new BemHandler('navigation');
 
-function Navigation({ menu, theme, burger }) {
+function Navigation({
+  theme,
+  burger,
+  onAuth,
+  onLogOut,
+}) {
+  const [menu, setMenu] = useState([]);
+  const { name: username } = useContext(CurrentUserContext);
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    const buttonSignUp = {
+      type: 'button',
+      onClick: onAuth,
+      name: 'Авторизоваться',
+    };
+
+    const buttonSignOut = {
+      type: 'button',
+      onClick: onLogOut,
+      name: username && username.split(' ')[0],
+      iconComponent: SignOutIcon,
+    };
+
+    const initialMenu = [
+      {
+        type: 'link',
+        to: '/',
+        name: 'Главная',
+      },
+      {
+        type: 'link',
+        to: '/saved-news',
+        name: 'Сохранённые статьи',
+        auth: true,
+      },
+      !username ? buttonSignUp : buttonSignOut,
+    ];
+
+    const authMenu = username
+      ? initialMenu
+      : initialMenu.filter((item) => item.auth !== true);
+
+    setMenu(authMenu);
+  }, [username, onAuth, onLogOut]);
 
   const getMenuItem = ({
     type,

@@ -21,7 +21,8 @@ function SearchForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(search);
+    setSearch(search.trim());
+    onSubmit(search.trim());
   };
 
   return (
@@ -37,6 +38,7 @@ function SearchForm({
         <form
           className={bem.get('form')}
           onSubmit={handleSubmit}
+          noValidate
         >
           <Input
             className={bem.get('input')}
@@ -44,6 +46,10 @@ function SearchForm({
             placeholder="Введите тему новости"
             radius="large"
             onChange={handleInput}
+            required
+            search
+            value={search}
+            noValidate
           />
           <Button
             className={bem.get('button')}
