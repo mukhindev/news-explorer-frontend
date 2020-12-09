@@ -79,9 +79,15 @@ function NewsCard({
     setImage(defaultImage);
   };
 
+  const handleClick = (e) => {
+    if (e.target.classList.contains('news-card__mark-button')) return;
+    window.open(link, '_blank');
+  };
+
   return (
     <article
       className={bem.get(null)}
+      onClickCapture={handleClick}
     >
       <div className={bem.get('header')} >
         <img
