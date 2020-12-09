@@ -105,7 +105,7 @@ function NewsCard({
         <span className={bem.get('date')}>{formatDate(new Date(date))}</span>
         <h2 className={bem.get('title')}>{title}</h2>
         <p className={bem.get('annotation')}>{text}</p>
-        <span className={bem.get('source')}>{source.name}</span>
+        <span className={bem.get('source')}>{source}</span>
       </div>
     </article>
   );
