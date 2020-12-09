@@ -54,7 +54,7 @@ function App() {
       const { articles } = await getSavedArticles({ token: localStorage.getItem('token') });
       if (articles) setSavedNews(articles);
     } catch (error) {
-      console.log(await error);
+      setOpenedPopup('error-not-responding');
     }
   }, []);
 
@@ -183,8 +183,7 @@ function App() {
         localStorage.setItem('articles', JSON.stringify(updatedNews));
       }
     } catch (error) {
-      // TODO: Показывать ошибку
-      console.log(await error);
+      setOpenedPopup('error-not-saved');
     }
   };
 
@@ -200,6 +199,7 @@ function App() {
         const index = news.findIndex(({ _id }) => _id === id);
         if (index !== -1) {
           const updatedFoundNews = [...news];
+          // TODO: Избавиться от ошибки eslint
           // eslint-disable-next-line no-underscore-dangle
           updatedFoundNews[index]._id = null;
           setNews(updatedFoundNews);
@@ -207,8 +207,7 @@ function App() {
         }
       }
     } catch (error) {
-      // TODO: Показывать ошибку
-      console.log(await error);
+      setOpenedPopup('error-not-deleted');
     }
   };
 
@@ -250,6 +249,36 @@ function App() {
             title="Пользователь успешно зарегистрирован!"
             linkText="Войти"
             onClick={() => setOpenedPopup('login')}
+          />
+        );
+      case 'error-not-saved':
+        return (
+          <Info
+            isOpen
+            onClose={closePopup}
+            title="Ошибка сервера. Не могу сохранить эту новость!"
+            linkText="Закрыть"
+            onClick={() => closePopup()}
+          />
+        );
+      case 'error-not-deleted':
+        return (
+          <Info
+            isOpen
+            onClose={closePopup}
+            title="Ошибка сервера. Не могу удалить эту новость!"
+            linkText="Закрыть"
+            onClick={() => closePopup()}
+          />
+        );
+      case 'error-not-responding':
+        return (
+          <Info
+            isOpen
+            onClose={closePopup}
+            title="Ошибка сервера. Нет ответа от сервера!"
+            linkText="Закрыть"
+            onClick={() => closePopup()}
           />
         );
       default:
